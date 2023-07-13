@@ -11,7 +11,7 @@
 - models.py
 - views.py
 
-- <!--  __init__.py --> ->(inside wesite folder) it is going to make the website folder a python package, which means we can import the folder, and whatever is inside the folder will run automatically once we import the folder.
+- `<__init__.py` ->(inside wesite folder) it is going to make the website folder a python package, which means we can import the folder, and whatever is inside the folder will run automatically once we import the folder.
 
 ### Flask setup and installation
 
@@ -69,7 +69,7 @@ return app
 - Make sure the version of Flask you are using is compatible with the installed watchdog version.
   ` __init__.py`
 
-##### main.py
+##### `main.py`
 
 ```py
 from website import create_app
@@ -107,7 +107,7 @@ app.run(debug=True)
 
 ### Creating Views and Routes
 
-#### views.py :
+#### `views.py` :
 
 ```py
 from flask import Blueprint
@@ -149,11 +149,11 @@ def home():
 return "<h1>Test</h1>"
 ```
 
-- This line is the body of the home() function. It returns an HTML string <h1>Test</h1>, which will be sent back as the response to the user's request.
+- This line is the body of the home() function. It returns an HTML string `<h1>Test</h1>`, which will be sent back as the response to the user's request.
 
-So, the overall purpose of this code is to define a blueprint named views with a single route at the root URL ("/"). When a user visits that URL, the home() function is executed, and it returns the HTML string <h1>Test</h1> as the response. This allows you to organize and group related routes and views in a modular manner within your Flask application.
+So, the overall purpose of this code is to define a blueprint named views with a single route at the root URL ("/"). When a user visits that URL, the home() function is executed, and it returns the HTML string `<h1>Test</h1>` as the response. This allows you to organize and group related routes and views in a modular manner within your Flask application.
 
-#### auth.py :
+#### `auth.py` :
 
 ```py
 from flask import Blueprint
