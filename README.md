@@ -2,7 +2,15 @@
 
 ### Set up Directory Structure
 
-- main.py -> this is the file we are going to run our webServer / website
+- create a file named main.py inside a directory
+- this is the file we are going to run our webServer / website
+- create a folder named 'website'
+- inside website folder create files:
+- `__init__.py`
+- auth.py
+- models.py
+- views.py
+
 - <!--  __init__.py --> ->(inside wesite folder) it is going to make the website folder a python package, which means we can import the folder, and whatever is inside the folder will run automatically once we import the folder.
 
 ### Flask setup and installation
@@ -18,7 +26,7 @@
 
 ### Creating A Flask App
 
-#### <!-- __init__.py --> :
+#### `__init__.py ` :
 
 ```py
 from  flask import Flask
@@ -44,7 +52,7 @@ def create_app():
  app = Flask(__name__)
 ```
 
-- This line creates an instance of the Flask class and assigns it to the variable app. The <!-- __name__ --> parameter is a special Python variable that represents the name of the current module. In this case, it will be the name of the file where this code is located.
+- This line creates an instance of the Flask class and assigns it to the variable app. The `__name__` parameter is a special Python variable that represents the name of the current module. In this case, it will be the name of the file where this code is located.
 
 ```py
 app.config['SECRET_KEY'] = 'blahSomething'
@@ -59,7 +67,7 @@ return app
 - This line returns the created Flask application instance.
 
 - Make sure the version of Flask you are using is compatible with the installed watchdog version.
-<!-- __init__.py -->
+  ` __init__.py`
 
 ##### main.py
 
@@ -96,3 +104,102 @@ app.run(debug=True)
 ```
 
 - This line runs the Flask application using the run method. The debug=True argument enables the debug mode, which provides more detailed error messages and automatic reloading of the application when changes are made. This is useful during development but should be disabled in production.
+
+### Creating Views and Routes
+
+#### views.py :
+
+```py
+from flask import Blueprint
+
+views = Blueprint("views", __name__)
+
+
+@views.route("/")
+def home():
+    return "<h1>Test</h1>"
+
+```
+
+```py
+from flask import Blueprint
+```
+
+- This line imports the Blueprint class from the Flask module. Blueprint is a way to organize routes, templates, and static files into modular components in a Flask application.
+
+```py
+views = Blueprint("views", __name__)
+```
+
+- This line creates an instance of the Blueprint class named views. The first argument, "views", is the name of the blueprint, which is used for referencing and registering the blueprint in the Flask application. The second argument, **name**, represents the name of the current module.
+
+```py
+@views.route("/")
+```
+
+- This line is a decorator that specifies the route for the following function. In this case, it decorates the home() function with the route "/". This means that when a user visits the root URL of the application, this function will be executed.
+
+```py
+def home():
+```
+
+- This line defines a function named home(). This function will be executed when a user visits the route specified by the decorator (/ in this case).
+
+```py
+return "<h1>Test</h1>"
+```
+
+- This line is the body of the home() function. It returns an HTML string <h1>Test</h1>, which will be sent back as the response to the user's request.
+
+So, the overall purpose of this code is to define a blueprint named views with a single route at the root URL ("/"). When a user visits that URL, the home() function is executed, and it returns the HTML string <h1>Test</h1> as the response. This allows you to organize and group related routes and views in a modular manner within your Flask application.
+
+#### auth.py :
+
+```py
+from flask import Blueprint
+
+auth = Blueprint("auth", **name**)
+
+```
+
+```py
+from flask import Blueprint
+```
+
+- This line imports the Blueprint class from the Flask module. Blueprint is a way to organize routes, templates, and static files into modular components in a Flask application.
+
+```py
+auth = Blueprint("auth", __name__)
+```
+
+- This line creates an instance of the Blueprint class named auth. The first argument, "auth", is the name of the blueprint, which is used for referencing and registering the blueprint in the Flask application. The second argument, **name**, represents the name of the current module.
+
+So, the overall purpose of this code is to define a blueprint named auth without any routes or views. The Blueprint instance can be used to group and organize authentication-related routes, views, and other components in a modular way within a Flask application.
+
+#### `__init__.py` :
+
+```py
+from .views import views
+```
+
+- This line imports the views blueprint from the .views module. The dot before views indicates that it is a relative import from the current package.
+
+```py
+from .auth import auth
+```
+
+- This line imports the auth blueprint from the .auth module. Similarly, it is a relative import from the current package.
+
+```py
+app.register_blueprint(views, url_prefix="/")
+```
+
+- This line registers the views blueprint with the Flask application. The url_prefix argument specifies the prefix to be added to all routes defined in the views blueprint. In this case, the routes in the views blueprint will have URLs starting with "/".
+
+```py
+app.register_blueprint(auth, url_prefix="/")
+```
+
+- This line registers the auth blueprint with the Flask application. Similarly, the url_prefix argument specifies the prefix for the routes defined in the auth blueprint.
+
+So, the overall purpose of this code is to define a `create_app()` function that creates and configures a Flask application with two blueprints: `views` and `auth`. The blueprints are registered with the application, and the application instance is returned for further use. The blueprints can be used to organize and modularize routes and views related to different aspects of the application, such as general views and authentication views.
