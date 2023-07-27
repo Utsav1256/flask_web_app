@@ -204,9 +204,17 @@ app.register_blueprint(auth, url_prefix="/")
 
 So, the overall purpose of this code is to define a `create_app()` function that creates and configures a Flask application with two blueprints: `views` and `auth`. The blueprints are registered with the application, and the application instance is returned for further use. The blueprints can be used to organize and modularize routes and views related to different aspects of the application, such as general views and authentication views.
 
-#### Running the webserver
+#### Running the webserver / App
 
 - you can do that by just running the main.py file.
+
+```py
+python main.py
+```
+
+#### Viewing The App
+
+Go to http://127.0.0.1:5000
 
 #### Making more routes
 
