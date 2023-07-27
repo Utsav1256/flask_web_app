@@ -259,3 +259,179 @@ return '<p>Sign Up</p>
 - It returns an HTML string <p>Sign Up</p>, which will be sent back as the response to the user's request when they visit the '/sign-up' URL.
 
 - So, the overall purpose of this code is to define a blueprint named auth with three routes: '/sign-up', '/login', and '/logout'. When a user visits any of these URLs, the corresponding function will be executed, and the HTML strings will be sent back as responses to the user's request. These routes can be registered with a Flask application to handle user authentication-related functionality.
+
+### Rendering Pages
+
+#### Create a base template (aka layout)
+
+#### base.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}Default{% endblock %}</title>
+  </head>
+  <body>
+    <div class="nav_bar">{% include '_navbar.html' %}</div>
+    <div class="container">{% block content %} {% endblock %}</div>
+  </body>
+</html>
+```
+
+```html
+<title>{% block title %}Default{% endblock %}</title>
+```
+
+- This line defines a block named title with a default value of "Default".
+- It will be replaced with specific values from child templates that extend this base template.
+
+```html
+<div class="nav_bar">{% include '_navbar.html' %}</div>
+```
+
+- This line includes the content from \_navbar.html inside a div with the class nav_bar.
+- The include directive is used to insert the content from another template into this template.
+
+```html
+<div class="container">{% block content %} {% endblock %}</div>
+```
+
+- The content within this block will be replaced by specific content from child templates that extend this base template.
+
+#### home.html
+
+```html
+{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
+%}
+<h1>This is the Home page.</h1>
+{% endblock %}
+```
+
+```html
+{% extends 'base.html' %}
+```
+
+- This line indicates that home.html is extending the base.html template, so it will inherit its structure and blocks.
+
+```html
+{% block title %}Home{% endblock %}
+```
+
+- This line overrides the title block from the base.html template.
+- It sets the title to "Home" for this specific page.
+
+```html
+{% block content %} and {% endblock %}
+```
+
+- These lines define the content block for this template. The content within this block will replace the content block in the base.html template.
+
+#### login.html
+
+```html
+{% extends 'base.html' %} {% block title %}Login{% endblock %} {% block content
+%}
+<h1>This is the Login page.</h1>
+{% endblock %}
+```
+
+- The login.html template follows a similar structure to home.html, but the title and content are specific to the Login page.
+
+#### signup.html
+
+```html
+{% extends 'base.html' %} {% block title %}SignUp{% endblock %} {% block content
+%}
+<h1>This is the SignUp page.</h1>
+{% endblock %}
+```
+
+- The signup.html template is also similar in structure, but the title and content are specific to the SignUp page.
+
+- In summary, these templates use Flask's templating engine (Jinja2) to create reusable components (base.html) that can be extended and overridden by child templates (home.html, login.html, signup.html). The extends directive allows child templates to inherit the structure and blocks from the base template, and the block and endblock directives define the areas where the content can be replaced. This templating approach makes it easier to maintain and organize the HTML code for different pages in a Flask application.
+
+#### auth.py
+
+```py
+from flask import Blueprint, render_template
+
+auth = Blueprint("auth", __name__)
+
+@auth.route('/sign-up')
+def sign_up():
+    return render_template('sign_up.html')
+
+@auth.route('/login')
+def login():
+    return render_template('login.html')
+
+@auth.route('/logout')
+def logout():
+    return '<p>Logout</p>'
+```
+
+```py
+from flask import Blueprint, render_template
+```
+
+- This line imports the Blueprint class and the render_template function from Flask.
+- Blueprint is used to organize routes,
+- and render_template is used to render HTML templates.
+
+```py
+auth = Blueprint("auth", __name__)
+```
+
+- This line creates an instance of the Blueprint class named auth.
+- The first argument, "auth", is the name of the blueprint, which is used for referencing and registering the blueprint in the Flask application.
+- The second argument, **name**, represents the name of the current module.
+
+```py
+@auth.route('/sign-up')
+```
+
+- This line is a decorator that specifies the route for the following sign_up() function.
+- It associates the URL path '/sign-up' with the sign_up() function.
+- When a user visits the URL /sign-up, the sign_up() function will be executed.
+
+```py
+def sign_up()
+```
+
+- This line defines a function named sign_up().
+- This function will be executed when a user visits the route specified by the @auth.route('/sign-up') decorator.
+
+```py
+return render_template('sign_up.html')
+```
+
+- This line uses the render_template function to render the sign_up.html template.
+- The rendered HTML content will be sent back as the response to the user's request when they visit the /sign-up URL.
+
+```py
+@auth.route('/login')
+```
+
+- This line is a decorator that specifies the route for the following login() function.
+- It associates the URL path '/login' with the login() function.
+- When a user visits the URL /login, the login() function will be executed.
+
+```py
+def login():
+```
+
+- This line defines a function named login().- This function will be executed when a user visits the route specified by the
+  @auth.route('/login') decorator.
+
+```py
+return render_template('login.html')
+```
+
+- his line uses the render_template function to render the login.html template.
+- The rendered HTML content will be sent back as the response to the user's request when they visit the /login URL.
+
+- Similarly, the logout.
