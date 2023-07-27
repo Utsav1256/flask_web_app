@@ -203,3 +203,51 @@ app.register_blueprint(auth, url_prefix="/")
 - This line registers the auth blueprint with the Flask application. Similarly, the url_prefix argument specifies the prefix for the routes defined in the auth blueprint.
 
 So, the overall purpose of this code is to define a `create_app()` function that creates and configures a Flask application with two blueprints: `views` and `auth`. The blueprints are registered with the application, and the application instance is returned for further use. The blueprints can be used to organize and modularize routes and views related to different aspects of the application, such as general views and authentication views.
+
+#### Running the webserver
+
+- you can do that by just running the main.py file.
+
+#### Making more routes
+
+```py
+from flask import Blueprint
+
+auth = Blueprint("auth", __name__)
+
+@auth.route('/sign-up')
+def sign_up():
+    return '<p>Sign Up</p>'
+
+@auth.route('/login')
+def login():
+    return "<p>Login</p>"
+
+@auth.route('/logout')
+def logout():
+    return '<p>Logout</p>'
+```
+
+```py
+@auth.route('/sign-up')
+```
+
+- This line is a decorator that specifies the route for the following sign_up() function.
+- It associates the URL path '/sign-up' with the sign_up() function.
+- When a user visits the URL '/sign-up', the sign_up() function will be executed.
+
+```py
+def sign_up():
+```
+
+- This line defines a function named sign_up().
+- This function will be executed when a user visits the route specified by the @auth.route('/sign-up') decorator.
+
+```py
+return '<p>Sign Up</p>
+```
+
+- This line is the body of the sign_up() function.
+- It returns an HTML string <p>Sign Up</p>, which will be sent back as the response to the user's request when they visit the '/sign-up' URL.
+
+- So, the overall purpose of this code is to define a blueprint named auth with three routes: '/sign-up', '/login', and '/logout'. When a user visits any of these URLs, the corresponding function will be executed, and the HTML strings will be sent back as responses to the user's request. These routes can be registered with a Flask application to handle user authentication-related functionality.
