@@ -435,3 +435,57 @@ return render_template('login.html')
 - The rendered HTML content will be sent back as the response to the user's request when they visit the /login URL.
 
 - Similarly, the logout.
+
+### Passing a variable to templates and display it on the page
+
+#### auth.py
+
+```py
+@auth.route("/login")
+def login():
+    return render_template("login.html", text="Testing", user="Utsav")
+```
+
+#### login.html
+
+```html
+{% extends 'base.html' %} {% block title %}Login{% endblock %} {% block content
+%}
+<h1>This is the Login page.</h1>
+{{text}} {{user + 's'}} {% endblock %}
+```
+
+- So there is a limitation what you can do inside '{{here}}'.
+- You can't do can't do everything you do in regular python.
+- But for the most part you can use like some basic expressions, display variables.
+
+### Use if statement in a template
+
+#### auth.py
+
+```py
+@auth.route("/login")
+def login():
+    return render_template("login.html", boolean=True)
+```
+
+#### login.html
+
+```html
+{% extends 'base.html' %} {% block title %}Login{% endblock %} {% block content
+%}
+<h1>This is the Login page.</h1>
+{% if boolean == True %} Yes it is true! {% endif %} {% endblock %}
+```
+
+### if else
+
+#### login.html
+
+```html
+{% extends 'base.html' %} {% block title %}Login{% endblock %} {% block content
+%}
+<h1>This is the Login page.</h1>
+{% if boolean == False %} Yes it is true! {% else %} No it is not true {% endif
+%}{% endblock %}
+```
