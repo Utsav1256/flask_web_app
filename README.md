@@ -158,7 +158,7 @@ So, the overall purpose of this code is to define a blueprint named views with a
 ```py
 from flask import Blueprint
 
-auth = Blueprint("auth", **name**)
+auth = Blueprint("auth", __name__)
 
 ```
 
@@ -489,3 +489,392 @@ def login():
 {% if boolean == False %} Yes it is true! {% else %} No it is not true {% endif
 %}{% endblock %}
 ```
+
+### Creating a signUp form
+
+#### sign_up.html
+
+```html
+{% extends 'base.html' %} {% block title %}SignUp{% endblock %} {% block content
+%}
+<form>
+  <h3 align="center">Sign Up</h3>
+  <div class="form-group">
+    <label for="email">Email Address</label>
+    <input
+      type="email"
+      class="form-control"
+      id="email"
+      name="email"
+      placeholder="Enter your email"
+    />
+  </div>
+  <label for="fullName">Full Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="fullName"
+      name="name"
+      placeholder="Enter your full name"
+    />
+  </div>
+
+</form>
+{% endblock %}
+```
+
+- What the name attribute do for us??
+- This is actually the attribute id going to be called when we pass the information in this feild to our backend.
+
+### HTTP (Hypertext Transfer Protocol)
+
+- It is the foundation of data communication on the internet.
+- It is an application-layer protocol that enables communication between clients (e.g., web browsers) and servers.
+- HTTP is a request-response protocol, where clients send requests to servers, and servers respond with the requested data.
+
+#### GET:
+
+##### Purpose:
+
+- The GET method is used to retrieve data from the server.
+- It is a safe and idempotent method, meaning that multiple identical GET requests should have the same effect as a single request.
+- GET requests should not have any side effects on the server.
+
+#### Characteristics:
+
+- The parameters are sent in the URL's query string, which is visible in the address bar of the browser.
+- The request should not have a request body (though it's technically allowed, it's rarely used in practice).
+
+##### Common Usage:
+
+- Retrieving web pages, images, CSS, JavaScript, and other static resources.
+
+#### POST:
+
+##### Purpose:
+
+- The POST method is used to submit data to the server.
+- It is not idempotent, meaning that multiple identical POST requests may have different effects on the server.
+- POST requests can be used to create new resources or update existing ones on the server.
+
+##### Characteristics:
+
+- The data is sent in the request body, often as form data or JSON.
+- The request body is not visible in the URL and is not limited in size like query parameters.
+
+##### Common Usage:
+
+- Submitting web forms, creating new records, uploading files.
+
+#### PUT:
+
+##### Purpose:
+
+- The PUT method is used to update existing resources on the server.
+- It is idempotent, meaning that multiple identical PUT requests will have the same effect as a single request.
+- If the resource does not exist, the server may create it.
+
+##### Characteristics:
+
+- The data is sent in the request body, often as form data or JSON.
+- The URL specifies the location of the resource to be updated.
+
+##### Common Usage:
+
+- Updating data, replacing resources.
+
+#### DELETE:
+
+##### Purpose:
+
+- The DELETE method is used to delete a resource from the server.
+- Like PUT, it is idempotent, meaning that multiple identical DELETE requests will have the same effect as a single request.
+- If the resource does not exist, the server should typically respond with an error (e.g., 404 Not Found).
+
+##### Characteristics:
+
+- The URL specifies the location of the resource to be deleted.
+- DELETE requests may or may not have a request body, but it's rarely used in practice.
+
+##### Common Usage:
+
+- Deleting resources.
+
+#### PATCH:
+
+##### Purpose:
+
+- The PATCH method is used to partially update a resource on the server.
+- It is similar to PUT, but while PUT replaces the entire resource, PATCH only updates specific fields or properties of the resource.
+
+##### Characteristics:
+
+- The data is sent in the request body, typically as a set of instructions or changes to be applied to the resource.
+- The URL specifies the location of the resource to be updated.
+
+##### Common Usage:
+
+- Partial updates to resources.
+
+#### HEAD:
+
+##### Purpose:
+
+- The HEAD method is similar to GET, but it requests only the headers of the response, not the actual data in the response body.
+- It is used to check if a resource exists or to retrieve metadata about the resource without transferring the entire content.
+
+##### Characteristics:
+
+- The parameters are sent in the URL's query string, similar to GET.
+- The response includes only the headers, without any response body.
+
+##### Common Usage:
+
+- Checking resource availability, getting metadata.
+
+#### OPTIONS:
+
+##### Purpose:
+
+- The OPTIONS method is used to retrieve information about the communication options available for a resource on the server.
+- It is used to determine the supported HTTP methods, headers, and other capabilities of the server.
+
+##### Characteristics:
+
+- The parameters are sent in the URL's query string, similar to GET.
+- The response includes headers that provide information about the server's capabilities.
+
+##### Common Usage:
+
+- Determining server capabilities.
+
+### Handling Post requests :
+
+- We want to make sure that login and signup are able to accept post request
+- To do that, we need to define something inside our root
+
+#### auth.py
+
+```py
+@auth.route("/sign-up", methods=["GET", "POST"])
+def sign_up():
+    return render_template("sign_up.html")
+
+
+@auth.route("/login", methods=["GET", "POST"])
+def login():
+    return render_template("login.html")
+```
+
+- By default it can only accept get request, but now after adding
+
+```py
+methods=["GET", "POST"]
+```
+
+it will be able to accept get and post request.
+
+### How we get the infromation from the form on the server
+
+- We need to import something called 'request' at the top of aur flask application.
+
+#### auth.py
+
+```py
+from flask import Blueprint, render_template, request
+```
+
+- if we want to get the information that is sent in this form, we can do :
+
+```py
+@auth.route("/login", methods=["GET", "POST"])
+def login():
+    data = request.form
+    print(data)
+    return render_template("login.html")
+```
+
+- Whenever you access this request variable inside of a route, it will have the information about the request that was sent to acces the route
+
+#### login.html
+
+```py
+@auth.route("/login", methods=["GET", "POST"])
+def login():
+    data = request.form
+    print(data)
+    return render_template("login.html")
+```
+
+Terminal(o/p):
+ImmutableMultiDict([('email', 'user1@gmail.com'), ('password', '1')])
+
+#### auth.py
+
+```py
+def sign_up():
+    if request.method == "POST":
+        email = request.form.get("email")
+        name = request.form.get("name")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if len(email) < 4:
+            pass
+        elif len(name) < 2:
+            pass
+        elif password != confirm_password:
+            pass
+        elif len(password) < 8:
+            pass
+        else:
+            # add user to database
+            pass
+    return render_template("sign_up.html")
+```
+
+```py
+def sign_up():
+    if request.method == "POST":
+```
+
+```py
+def sign_up():
+```
+
+- This line defines a function named sign_up().
+
+```py
+if request.method == "POST":
+```
+
+- This line checks if the HTTP request method is a POST request.
+- The request object is available in Flask, and it contains information about the current HTTP request.
+- In this case, the function is specifically looking for a POST request, which is usually used when submitting data to the server, like form submissions.
+
+```py
+email = request.form.get("email")
+name = request.form.get("name")
+password = request.form.get("password")
+confirm_password = request.form.get("confirm_password")
+```
+
+- These lines retrieve data from the request's form data.
+- The form data is a set of key-value pairs sent by the client (usually from an HTML form submission).
+- The request.form object contains these key-value pairs, and the get() method is used to extract the values corresponding to the given keys.
+- In this case, the keys are "email", "name", "password", and "confirm_password", which are the names of input fields in the HTML form.
+
+```py
+if len(email) < 4:
+    pass
+```
+
+This line checks if the length of the email is less than 4 characters. If this condition is met, the code will execute the pass statement, which means it does nothing and continues to the next condition.
+
+### Message Flashing
+
+- We can flash a message on the screen by importing flash ( this is built in functionality in flask)
+
+#### auth.py
+```py
+from flask import Blueprint, render_template, request, flash
+
+auth = Blueprint("auth", __name__)
+
+
+@auth.route("/sign-up", methods=["GET", "POST"])
+def sign_up():
+    if request.method == "POST":
+        email = request.form.get("email")
+        name = request.form.get("name")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if len(email) < 4:
+            flash("Email must be greater than 3 characters.", category="error")
+        elif len(name) < 2:
+            flash("Name must be greater than 1 characters.", category="error")
+
+        elif password != confirm_password:
+            flash("Password dont't match.", category="error")
+
+        elif len(password) < 7:
+            flash("Password must be greater than 7 characters.", category="error")
+
+        else:
+            # add user to database
+            flash("Account created!", category="success")
+    return render_template("sign_up.html")
+```
+```py
+ if len(email) < 4:
+            flash("Email must be greater than 3 characters.", category="error")
+```
+- This line checks if the length of the email input is less than 4 characters.
+- If it is, the code flashes a message with the category "error".
+- Flash messages are used to display temporary messages to the user, which can be retrieved and displayed in the template.
+
+
+
+
+#### base.html
+```py
+  <body>
+    <div class="nav_bar">{% include '_navbar.html' %}</div>
+    {% with messages = get_flashed_messages(with_categories=true) %} 
+      {% if messages %} 
+        {% for category, message in messages %} 
+          {% if category == 'error' %}
+            <div class="alert alert-danger alert-dismissable fade show" role="alert">
+              {{message}}
+              <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% else %}
+            <div class="alert alert-success alert-dismissable fade show" role="alert">
+              {{message}}
+              <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <div class="container">{% block content %} {% endblock %}</div>
+  </body>
+```
+- The code between '{% with %}' and '{% endwith %}' is a Jinja2 template block that handles flash messages.
+- Flash messages are temporary messages that can be displayed to users after an action, like successful or failed login attempts.
+
+```py
+{% with messages = get_flashed_messages(with_categories=true) %}
+```
+- This line uses the get_flashed_messages function to retrieve the flashed messages.
+- The with_categories=true parameter means that the messages are returned as tuples, with each tuple containing the message and its category (e.g., 'error' or 'success').
+```py
+{% if messages %}
+```
+- This line checks if there are any flashed messages. If there are, the code proceeds to loop through them to display the messages.
+```py
+{% for category, message in messages %}
+```
+- This line starts a loop to iterate over the flashed messages.
+- Each message's category and content are unpacked into the variables category and message.
+```py
+{% if category == 'error' %}
+```
+- This line checks if the message category is 'error'.
+- If it is, the code will display the message as a danger/alert message with a red background.
+```py
+{% else %}
+```
+- If the message category is not 'error' (i.e., it's a success message), the code will display the message as a success/alert message with a green background.
+```py
+{{message}}
+```
+- This line displays the content of the flashed message within the alert box.
+```html
+<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button> ```
+- This line adds a close button (an 'x' symbol) to the alert box, allowing users to dismiss the message.
