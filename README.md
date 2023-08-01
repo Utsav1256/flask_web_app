@@ -875,6 +875,109 @@ def sign_up():
 {{message}}
 ```
 - This line displays the content of the flashed message within the alert box.
+
 ```html
-<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button> ```
+<button type="button" class="close" data-dismiss="alert">
+    <span aria-hidden="true">&times;</span>
+</button>
+```
 - This line adds a close button (an 'x' symbol) to the alert box, allowing users to dismiss the message.
+
+### Flask SQLAlchemy setup
+
+- Let's set up ur database
+#### __init__.py
+```py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+DB_NAME = "database.db"
+
+
+def create_app():
+    app = Flask(__name__)  # __name__ -> represents the name of the file
+    app.config["SECRET_KEY"] = "blahSomething"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_NAME}"
+    db.init_app(app)
+
+    from .views import views
+    from .auth import auth
+
+    app.register_blueprint(views, url_prefix="/")
+    app.register_blueprint(auth, url_prefix="/")
+
+    return app
+```
+
+```py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+```
+- SQLAlchemy is imported from flask_sqlalchemy, which is an extension that simplifies integration with SQL databases.
+
+```py
+db = SQLAlchemy()
+```
+- This line creates an instance of the SQLAlchemy class and assigns it to the variable db.
+- This instance will be used to interact with the database and perform database-related operations.
+
+```py
+DB_NAME = "database.db"
+```
+- This line sets the name of the SQLite database file to be used as "database.db".
+- This is the name of the database file that will be created when using SQLite as the database management system.
+
+```py
+def create_app():
+    app = Flask(__name__)  # __name__ -> represents the name of the file
+    app.config["SECRET_KEY"] = "blahSomething"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_NAME}"
+    db.init_app(app)
+```
+
+```py
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_NAME}"
+```
+```py
+app.config
+```
+- config is a dictionary-like object that holds the configuration settings for the Flask application.
+
+```py
+"SQLALCHEMY_DATABASE_URI"
+```
+- This is the key in the config dictionary where the database URI for SQLAlchemy is specified.
+- Flask-SQLAlchemy uses this key to know where the database is located and how to connect to it.
+-------
+#### `URI` stands for `"Uniform Resource Identifier"`.
+- It is a string of characters used to identify and locate a resource on the internet or a network.
+- The resource can be anything that has a unique address, such as a web page, a file, an image, a database, or any other resource accessible over the network.
+
+- A URI is a superset of Uniform Resource Locator (URL) and Uniform Resource Name (URN). URLs and URNs are specific types of URIs:
+
+##### Uniform Resource Locator (URL):
+- A URL is a type of URI that provides the means to locate a resource on the internet or a network.
+- It includes the protocol (e.g., HTTP, HTTPS), the domain name or IP address of the server, the port number (optional), the path to the resource on the server, and any query parameters or fragments. For example, https://www.example.com:8080/page?param=value#section.
+
+##### Uniform Resource Name (URN):
+- A URN is another type of URI that provides a unique name for a resource without specifying its location.
+- URNs are intended to be persistent and globally unique identifiers for resources. For example, urn:isbn:0451450523 (an ISBN number for a book).
+
+`URIs` are used to identify and access resources in various applications, including web browsers, APIs, web services, and database connections.
+- In the context of databases, like in the SQLALCHEMY_DATABASE_URI configuration parameter we discussed earlier, a URI is used to specify the connection details for the database, including the type of database (e.g., SQLite, MySQL, PostgreSQL) and its location (file path or server address).
+--------
+```py
+f"sqlite:///{DB_NAME}"
+```
+- This part uses an f-string (formatted string literal) to create the database URI.
+- In this case, it's using an SQLite database, so the URI starts with "sqlite://". The {DB_NAME} is the variable that holds the name of the SQLite database file, which is set as "database.db". So, the complete database URI becomes "sqlite:///database.db".
+- This line sets the SQLAlchemy database URI for the SQLite database.
+- The database URI tells SQLAlchemy where the database is located and how to connect to it.
+- In this case, it uses SQLite as the database, and the database file will be named "database.db".
+
+```py
+db.init_app(app)
+```
+- This line initializes the database with the Flask application instance.
+- It binds the SQLAlchemy instance (db) to the Flask app, allowing you to use SQLAlchemy features with the Flask application.
