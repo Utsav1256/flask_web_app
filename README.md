@@ -776,6 +776,7 @@ This line checks if the length of the email is less than 4 characters. If this c
 - We can flash a message on the screen by importing flash ( this is built in functionality in flask)
 
 #### auth.py
+
 ```py
 from flask import Blueprint, render_template, request, flash
 
@@ -806,24 +807,24 @@ def sign_up():
             flash("Account created!", category="success")
     return render_template("sign_up.html")
 ```
+
 ```py
  if len(email) < 4:
             flash("Email must be greater than 3 characters.", category="error")
 ```
+
 - This line checks if the length of the email input is less than 4 characters.
 - If it is, the code flashes a message with the category "error".
 - Flash messages are used to display temporary messages to the user, which can be retrieved and displayed in the template.
 
-
-
-
 #### base.html
+
 ```py
   <body>
     <div class="nav_bar">{% include '_navbar.html' %}</div>
-    {% with messages = get_flashed_messages(with_categories=true) %} 
-      {% if messages %} 
-        {% for category, message in messages %} 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
           {% if category == 'error' %}
             <div class="alert alert-danger alert-dismissable fade show" role="alert">
               {{message}}
@@ -845,48 +846,63 @@ def sign_up():
     <div class="container">{% block content %} {% endblock %}</div>
   </body>
 ```
+
 - The code between '{% with %}' and '{% endwith %}' is a Jinja2 template block that handles flash messages.
 - Flash messages are temporary messages that can be displayed to users after an action, like successful or failed login attempts.
 
 ```py
 {% with messages = get_flashed_messages(with_categories=true) %}
 ```
+
 - This line uses the get_flashed_messages function to retrieve the flashed messages.
 - The with_categories=true parameter means that the messages are returned as tuples, with each tuple containing the message and its category (e.g., 'error' or 'success').
+
 ```py
 {% if messages %}
 ```
+
 - This line checks if there are any flashed messages. If there are, the code proceeds to loop through them to display the messages.
+
 ```py
 {% for category, message in messages %}
 ```
+
 - This line starts a loop to iterate over the flashed messages.
 - Each message's category and content are unpacked into the variables category and message.
+
 ```py
 {% if category == 'error' %}
 ```
+
 - This line checks if the message category is 'error'.
 - If it is, the code will display the message as a danger/alert message with a red background.
+
 ```py
 {% else %}
 ```
+
 - If the message category is not 'error' (i.e., it's a success message), the code will display the message as a success/alert message with a green background.
+
 ```py
 {{message}}
 ```
+
 - This line displays the content of the flashed message within the alert box.
 
 ```html
 <button type="button" class="close" data-dismiss="alert">
-    <span aria-hidden="true">&times;</span>
+  <span aria-hidden="true">&times;</span>
 </button>
 ```
+
 - This line adds a close button (an 'x' symbol) to the alert box, allowing users to dismiss the message.
 
 ### Flask SQLAlchemy setup
 
-- Let's set up ur database
-#### __init__.py
+- Let's set up our database
+
+#### **init**.py
+
 ```py
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -914,17 +930,20 @@ def create_app():
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 ```
+
 - SQLAlchemy is imported from flask_sqlalchemy, which is an extension that simplifies integration with SQL databases.
 
 ```py
 db = SQLAlchemy()
 ```
+
 - This line creates an instance of the SQLAlchemy class and assigns it to the variable db.
 - This instance will be used to interact with the database and perform database-related operations.
 
 ```py
 DB_NAME = "database.db"
 ```
+
 - This line sets the name of the SQLite database file to be used as "database.db".
 - This is the name of the database file that will be created when using SQLite as the database management system.
 
@@ -939,37 +958,49 @@ def create_app():
 ```py
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_NAME}"
 ```
+
 ```py
 app.config
 ```
+
 - config is a dictionary-like object that holds the configuration settings for the Flask application.
 
 ```py
 "SQLALCHEMY_DATABASE_URI"
 ```
+
 - This is the key in the config dictionary where the database URI for SQLAlchemy is specified.
 - Flask-SQLAlchemy uses this key to know where the database is located and how to connect to it.
--------
+
+---
+
 #### `URI` stands for `"Uniform Resource Identifier"`.
+
 - It is a string of characters used to identify and locate a resource on the internet or a network.
 - The resource can be anything that has a unique address, such as a web page, a file, an image, a database, or any other resource accessible over the network.
 
 - A URI is a superset of Uniform Resource Locator (URL) and Uniform Resource Name (URN). URLs and URNs are specific types of URIs:
 
 ##### Uniform Resource Locator (URL):
+
 - A URL is a type of URI that provides the means to locate a resource on the internet or a network.
 - It includes the protocol (e.g., HTTP, HTTPS), the domain name or IP address of the server, the port number (optional), the path to the resource on the server, and any query parameters or fragments. For example, https://www.example.com:8080/page?param=value#section.
 
 ##### Uniform Resource Name (URN):
+
 - A URN is another type of URI that provides a unique name for a resource without specifying its location.
 - URNs are intended to be persistent and globally unique identifiers for resources. For example, urn:isbn:0451450523 (an ISBN number for a book).
 
 `URIs` are used to identify and access resources in various applications, including web browsers, APIs, web services, and database connections.
+
 - In the context of databases, like in the SQLALCHEMY_DATABASE_URI configuration parameter we discussed earlier, a URI is used to specify the connection details for the database, including the type of database (e.g., SQLite, MySQL, PostgreSQL) and its location (file path or server address).
---------
+
+---
+
 ```py
 f"sqlite:///{DB_NAME}"
 ```
+
 - This part uses an f-string (formatted string literal) to create the database URI.
 - In this case, it's using an SQLite database, so the URI starts with "sqlite://". The {DB_NAME} is the variable that holds the name of the SQLite database file, which is set as "database.db". So, the complete database URI becomes "sqlite:///database.db".
 - This line sets the SQLAlchemy database URI for the SQLite database.
@@ -979,5 +1010,227 @@ f"sqlite:///{DB_NAME}"
 ```py
 db.init_app(app)
 ```
+
 - This line initializes the database with the Flask application instance.
 - It binds the SQLAlchemy instance (db) to the Flask app, allowing you to use SQLAlchemy features with the Flask application.
+
+### Database Models
+
+- Now, we will create database models.
+
+#### models.py
+
+```py
+from . import db
+from flask_login import UserMixin
+
+class User(db.model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True)
+    password = db.Column(db.String(150))
+    name = db.Column(db.String(150))
+```
+
+```py
+from . import db
+```
+
+- This line imports the db object from the current package (denoted by the dot .).
+- The db object is likely an instance of SQLAlchemy, which is used to interact with the database.
+
+```py
+from flask_login import UserMixin
+```
+
+- This line imports UserMixin from flask_login.
+- UserMixin is a mixin class provided by the Flask-Login extension that provides default implementations for common user-related methods.
+
+```py
+class User(db.Model, UserMixin):
+```
+
+- This line defines the User class, which represents a user in the application.
+- The class inherits from two other classes: db.Model (presumably from SQLAlchemy) and UserMixin.
+
+`db.Model`:
+
+- This is likely a base class provided by SQLAlchemy to define database models.
+- The User class will represent a database table that stores user information.
+
+`UserMixin`:
+
+- As mentioned earlier, this mixin class provides default implementations for methods required by Flask-Login to manage user sessions and authentication.
+
+```py
+id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True)
+    password = db.Column(db.String(150))
+    name = db.Column(db.String(150))
+```
+
+- These lines define the columns of the User table in the database.
+- Each column corresponds to an attribute of the User class.
+
+```py
+db.Column
+```
+
+- This is a function provided by SQLAlchemy to define table columns.
+- It takes two arguments: the data type of the column and any additional constraints.
+
+```py
+id = db.Column(db.Integer, primary_key=True)
+```
+
+- This line defines the id column as an integer primary key.
+- The `primary_key=True` argument indicates that this column will be the primary key for the table.
+
+```py
+email = db.Column(db.String(150), unique=True)
+```
+
+- This line defines the email column as a string with a maximum length of 150 characters and sets it as unique.
+- The `unique=True` argument ensures that each email value must be unique in the table.
+
+```py
+password = db.Column(db.String(150))
+```
+
+- This line defines the password column as a string with a maximum length of 150 characters.
+- It will store the hashed password of the user.
+
+```py
+name = db.Column(db.String(150))
+```
+
+- This line defines the name column as a string with a maximum length of 150 characters.
+- It will store the name of the user.
+
+```py
+from . import db
+from flask_login import UserMixin
+from sqlalchemy.sql import func
+
+
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.String(10000))
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+
+
+class User(db.model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True)
+    password = db.Column(db.String(150))
+    name = db.Column(db.String(150))
+```
+
+```py
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.String(10000))
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+
+```
+
+- This class represents a database table named "Note" to store notes in the application.
+
+```py
+id = db.Column(db.Integer, primary_key=True)
+```
+
+- This line defines the id column as an integer primary key.
+- It uniquely identifies each note in the table.
+
+```py
+data = db.Column(db.String(10000))
+```
+
+- This line defines the data column as a string with a maximum length of 10000 characters.
+- It will store the actual content of the note.
+
+```py
+date = db.Column(db.DateTime(timezone=True), default=func.now())
+```
+
+- This line defines the date column as a DateTime column.
+- It will store the date and time when the note is created.
+- The `default=func.now()` argument sets the default value for this column to the current date and time.
+
+```py
+ from sqlalchemy.sql import func
+```
+
+- imports the func object from the sqlalchemy.sql module.
+
+### Foreign Key Relationships
+
+- All of the notes must belong to a user.
+- We will learn hear, How to associate different information with different users.
+- We want that each users can have multiple notes.
+- we need to setup a relationship between the `note` object and `user` object.
+- We do this in the form of a foreign key.
+
+A `foreign key` is a relational database concept used to establish a relationship between two tables in a database. It is a column or a set of columns in one table that refers to the primary key of another table. This relationship allows you to connect rows of data from one table with corresponding rows in another table, creating a link or association between the two tables.
+
+Here's how a foreign key works:
+
+Primary Key: In a relational database, each table typically has a primary key, which is a unique identifier for each row in the table. The primary key ensures that each row has a unique identity within the table.
+
+Foreign Key: A foreign key in one table is used to reference the primary key of another table. It creates a link between the two tables, representing a relationship between the data in them.
+
+Relationships: The foreign key establishes a parent-child relationship between the tables. The table containing the foreign key is called the "child" table, and the table with the primary key that it references is called the "parent" table.
+
+```py
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.String(10000))
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+```
+
+- This is what we call a `One-to-Many` relationship, we have one user that has many notes.
+- When we have the one-to-many relationship, we have one object that has many children, now in tnis case we have user that has many nodes.
+- What we do is, we store a foreign key on the child objects, they reference the parent object.
+- So now every time we have a note we can figure out which user have created it by lookong at the user id.
+- The db.ForeignKey() -> inforces that we, must give a valid userID to tbis object, otherwisewe can not create it, because we have a relationship b/w the user and the note.
+- Now, `user.id` where I am getting this from??
+- In python we use capitals for the classes
+- but in SQL, the `User` class here is actually represented by `user`, thats why we are putting user there with a lowercase.
+- And you now the id is the feild of the User object so we are referencing to the id feild -> `user.id`
+- Suppose, if the primary key is represented bhy name or email than we will do -> u`ser.name` or `user.email`.
+
+---
+
+- Great, so Now we have that
+- Now what that means, from each note we can reference who created it
+- but, we don't just want that..😊
+- We awnt from all users to be able to find all of their notes 😎
+
+---
+
+- So What we need to do Now!!
+- We need to set up afeild on our `User` that says `notes`
+
+```py
+class User(db.model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True)
+    password = db.Column(db.String(150))
+    name = db.Column(db.String(150))
+    notes = db.relationship("Note")
+```
+
+- The line `notes = db.relationship("Note")` is used to establish a relationship between the `User` class and the `Note` class in SQLAlchemy.
+- This relationship defines how users and their associated notes are connected
+- `notes`: This is an attribute that you are adding to the User class.
+- It will represent the relationship between users and their associated notes.
+- When you access this attribute on an instance of the User class, it will give you access to the notes associated with that user.
+- `db.relationship("Note")`:
+- This is how you define the relationship between the User class and the Note class.
+- The db.relationship function is provided by SQLAlchemy to establish relationships between tables.
+- By adding this line to the User class, you are telling SQLAlchemy that each user can have multiple associated notes.
+- SQLAlchemy will automatically manage the relationship for you, allowing you to easily query for notes associated with a specific user.
+- `Note` -> Here it is capital, we do need capital for this one, don't ask why? This is the way that SQLAlchemy works.
+- whe we do the foreignkey() -> we need lowecase
+- And when we do relationship() we need the naem of the class, which is obviously capital.
