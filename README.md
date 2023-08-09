@@ -1506,3 +1506,149 @@ else:
 😀😁😎 Great Job till Here!!
 
 ---
+
+Now when a user is logged-in then only we should show `logout`, `profile`.
+and if a user is not logged-in then should show `signUp`, `login`.
+
+To do that we need `Flask Login`
+
+### Flask login
+
+- This module makes life super easy.
+
+```py
+from flask_login import login_user, login_required, logout_user, current_user
+```
+
+`login_user`:
+
+- This function is used to log a user in. After a user's credentials are authenticated, you can use login_user(user) to mark the user as logged in.
+
+`login_required`:
+
+- This decorator is used to protect specific routes, ensuring that only authenticated users can access them.
+
+`logout_user`:
+
+- This function is used to log a user out. It clears the user's session and removes their authentication.
+
+`current_user`:
+
+- This is a special object provided by Flask-Login that represents the current authenticated user.
+
+`auth.sign_up`
+
+```py
+else:
+            # add user to database
+            new_user = User(
+                email=email,
+                name=name,
+                password=generate_password_hash(password, method="sha256"),
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(user, remember=True)
+
+            flash("Account created!", category="success")
+
+            # redirecting to homepage
+            return redirect(url_for("views.home"))
+```
+
+&
+
+```py
+user = User.query.filter_by(email=email).first()
+        if user:
+            if check_password_hash(user.password, password):
+                flash("Logged in successfully!", category="success")
+                login_user(user, remember=True)
+                return redirect(url_for("views.home"))
+            else:
+                flash("Incorrect password, try again.", category="error")
+        else:
+            flash("Email doea not exist.", category="error")
+```
+
+`login_user(user, remember=True)`
+
+- With remember=True, even if the user closes their browser and comes back later, they will still be logged in, unless they explicitly log out or the session expires due to other reasons.
+
+- This is a useful feature to provide convenience to users who don't want to log in every time they visit your site. However, remember to handle user sessions and logouts properly to ensure security.
+
+```py
+@auth.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("auth.login"))
+
+```
+
+- `@login_required`:
+- This decorator is from Flask-Login. It ensures that the user must be logged in to access the view function.
+- If a user is not authenticated, they will be redirected to the login page (configured by Flask-Login).
+
+- `logout_user()`: This function, provided by Flask-Login, logs out the current user by removing their session cookie.
+
+- `return redirect(url_for("auth.login"))`:
+- After logging out the user, this line redirects them to the login page.
+- The url_for function generates the URL for the specified view function (in this case, "auth.login").
+
+Now the last thing weneed to do here when we are using flask login
+we need to tell Flask, how we find a user
+
+`__init__.py`
+
+```py
+from flask_login import LoginManager
+```
+
+```py
+    login_manager = LoginManager()
+    login_manager.login_view = "auth.login"
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
+```
+
+- Import the LoginManager class from the flask_login module, which is an essential part of setting up user authentication and session management in a Flask web application.
+
+```py
+login_manager = LoginManager()
+```
+
+- This line creates an instance of the LoginManager class, which is provided by the flask_login extension.
+- LoginManager is responsible for managing user authentication and sessions.
+
+```py
+login_manager.login_view = "auth.login"
+```
+
+- This line sets the login_view attribute of the LoginManager instance.
+- It specifies the endpoint (route) where users should be redirected if they try to access a protected resource without being logged in.
+- In this case, it's set to "auth.login", which is the endpoint for the login page.
+
+```py
+login_manager.init_app(app)
+```
+
+- This line initializes the LoginManager instance with your Flask application (app).
+- It connects the LoginManager to your app and prepares it to manage user sessions and authentication.
+
+```py
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+```
+
+- This is a decorator-based function that tells the LoginManager how to load a user object based on the user ID stored in the session.
+- When a user is authenticated and their ID is stored in the session, this function is called to retrieve the corresponding user object.
+- It takes the user ID as an argument and returns the user object.
+- In this example, it uses the User model and the provided user ID to query the database and retrieve the user.
+
+- Overall, these lines of code set up the LoginManager extension for your Flask application. They configure the login view, define how user loading should work, and initialize the extension to manage user authentication. This setup enables you to use decorators like @login_required and functions like login_user() and logout_user() to manage user sessions and authentication throughout your application.
