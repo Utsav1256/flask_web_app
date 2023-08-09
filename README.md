@@ -1348,3 +1348,110 @@ print("Created Database!")
 - To summarize, the create_database function is responsible for checking if the database file doesn't exist and then creating all the necessary tables based on the defined models using SQLAlchemy. It's a crucial step in setting up and initializing the database structure for your Flask application.
 
 - This will create a database.db file inside the directory.
+
+### Creating new user accounts
+
+- Now we can start using our signup method/function to actually create an user account.
+
+`auth.py`
+
+```py
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from .models import User
+from werkzeug.security import generate_password_hash, check_password_hash
+from . import db
+```
+
+```py
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+```
+
+- `Blueprint`: A blueprint is a way to organize and group related views (routes) in a Flask application.
+- `render_template`: A function to render HTML templates with variables and logic.
+- `request`: Provides access to incoming request data from the client, such as form data.
+- `flash`: A method to store messages in a session that can be displayed to the user.
+- `redirect`: A function to redirect to a different route or URL.
+- `url_for`: A function to generate a URL for a specific route.
+
+```py
+from .models import User
+```
+
+- `from .models`: Imports the User model from the models.py file within the same package (directory).
+- `User`: Represents the User model, which defines the structure of the User table in the database.
+
+```py
+from werkzeug.security import generate_password_hash, check_password_hash
+```
+
+- `werkzeug.security`: A module providing various security-related functions.
+
+- `generate_password_hash`: Generates a secure hash of a password to store in the database.
+- `check_password_hash`: Compares a stored password hash with a provided password to check for a match.
+
+```py
+from . import db
+```
+
+`from .`: Refers to the current package (directory) where this code resides.
+`db`: The SQLAlchemy instance, which is used to interact with the database.
+
+```py
+ new_user = User(
+                email=email,
+                name=name,
+                password=generate_password_hash(password, method="sha256"),
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            flash("Account created!", category="success")
+
+            # redirecting to homepage
+            return redirect(url_for("views.home"))
+```
+
+```py
+new_user = User(
+    email=email,
+    name=name,
+    password=generate_password_hash(password, method="sha256"),
+)
+```
+
+- In this step, a new instance of the User model is created.
+- The User model has attributes id, email, name, and password.
+- The values for these attributes are taken from the user's input in the registration form.
+- The password is hashed using the generate_password_hash function from werkzeug.security.
+- Hashing the password adds a layer of security by ensuring that the actual password is not stored in the database.
+
+```py
+db.session.add(new_user)
+```
+
+- The newly created new_user object is added to the database session.
+- This means that the changes made to this object will be tracked by the SQLAlchemy session and will be pending until they are committed to the database.
+
+```py
+db.session.commit()
+```
+
+- The changes made in the session (in this case, adding the new user) are committed to the database.
+- This effectively inserts the new user's record into the User table in the database.
+
+```py
+flash("Account created!", category="success")
+```
+
+- The flash function is used to store a message in a temporary storage that will be displayed to the user on the next rendered page.
+- In this case, a success message "Account created!" is flashed with the category set to "success".
+- This message will be displayed to the user to confirm that their account has been successfully created.
+
+```py
+return redirect(url_for("views.home"))
+```
+
+- The redirect function is used to redirect the user to a different route.
+- In this case, it redirects the user to the home route, which is associated with the home view function.
+- The url_for function generates the URL for the specified view function. After successful registration, the user is redirected to the home page of the website.
+
+- In summary, this sequence of steps handles user registration by creating a new user object, adding it to the database session, committing the changes to the database, displaying a success message to the user, and then redirecting the user to the home page. This ensures that the user's information is securely stored in the database and provides immediate feedback to the user about the success of their registration.
