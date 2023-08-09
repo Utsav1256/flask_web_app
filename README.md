@@ -1455,3 +1455,48 @@ return redirect(url_for("views.home"))
 - The url_for function generates the URL for the specified view function. After successful registration, the user is redirected to the home page of the website.
 
 - In summary, this sequence of steps handles user registration by creating a new user object, adding it to the database session, committing the changes to the database, displaying a success message to the user, and then redirecting the user to the home page. This ensures that the user's information is securely stored in the database and provides immediate feedback to the user about the success of their registration.
+
+### Loggin Users
+
+`auth.py`
+
+```py
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            if check_password_hash(user.password, password):
+                flash("Logged in successfully!", category="success")
+                return redirect(url_for("views.home"))
+            else:
+                flash("Incorrect password, try again.", category="error")
+        else:
+            flash("Email doea not exist.", category="error")
+    return render_template("login.html")
+```
+
+```py
+user = User.query.filter_by(email=email).first()
+```
+
+- Using SQLAlchemy's querying capabilities, this line retrieves the first user from the database whose email matches the one provided in the form.
+
+```py
+if user:
+    if check_password_hash(user.password, password):
+        flash("Logged in successfully!", category="success")
+        return redirect(url_for("views.home"))
+    else:
+        flash("Incorrect password, try again.", category="error")
+else:
+    flash("Email does not exist.", category="error")
+```
+
+- If a user with the provided email exists in the database,
+- it then checks if the provided password matches the stored hashed password using check_password_hash.
+- If the passwords match, a success message is flashed, and the user is redirected to the home page.
+- If the password does not match, an error message is flashed.
+- If no user with the provided email exists, an error message is flashed indicating that the email does not exist in the database.
