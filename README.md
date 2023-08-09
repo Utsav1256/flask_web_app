@@ -1234,3 +1234,117 @@ class User(db.model, UserMixin):
 - `Note` -> Here it is capital, we do need capital for this one, don't ask why? This is the way that SQLAlchemy works.
 - whe we do the foreignkey() -> we need lowecase
 - And when we do relationship() we need the naem of the class, which is obviously capital.
+
+### Database Creation
+
+- So we have defined what it will look like, now we need to create it..
+
+```py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from os import path
+
+db = SQLAlchemy()
+DB_NAME = "database.db"
+
+
+def create_app():
+    app = Flask(__name__)  # __name__ -> represents the name of the file
+    app.config["SECRET_KEY"] = "blahSomething"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_NAME}"
+    db.init_app(app)
+
+    from .views import views
+    from .auth import auth
+
+    app.register_blueprint(views, url_prefix="/")
+    app.register_blueprint(auth, url_prefix="/")
+
+    from .models import User, Note
+
+    return app
+
+
+def create_database(app):
+    if not path.exists("website/", DB_NAME):
+        db.crate_all(app=app)
+        print("Created Database!")
+
+```
+
+```py
+from .models import User, Note
+```
+
+- First Question is, Why we are importing these??
+- The reason we import these, is not because we are actually going to use anything,
+- it is because we need to make sure that we load this file,
+- and this file `models.py` runs and define these classes `User` & `Note` before we initialize or create our database.
+- So import the models file so that it defines these classes for us and then we can go ahead and create our database.
+
+```py
+from os import path
+```
+
+- The line from os import path is an import statement that allows you to use the path module from the os (operating system) package in your Python code.
+
+- This module provides functions and classes for working with file and directory paths.
+
+- `os`: This is the Python standard library module that provides a way to interact with the operating system.
+
+- It includes functions and utilities for various tasks related to file management, process management, environment variables, and more.
+
+- `path`: This is a submodule of the os module that specifically deals with file and directory path operations.
+
+- It provides functions to manipulate and analyze file paths.
+
+- By importing path from the os module, you can use the functions provided by the path submodule to work with file paths in a cross-platform manner. For example, you can use functions like path.exists(), path.join(), path.basename(), and others to handle file paths in your code.
+
+```py
+def create_database(app):
+    if not path.exists("website/", DB_NAME):
+        db.crate_all(app=app)
+        print("Created Database!")
+
+```
+
+```py
+def create_database(app):
+```
+
+- Defines a function named create_database that takes an app argument.
+
+- This function is meant to create the database tables associated with the provided Flask app instance.
+
+```py
+ with app.app_context():
+```
+
+- Wrap the database creation code within a `with app.app_context():` block.
+- This ensures that the code inside the block is executed within the context of the Flask application.
+
+```py
+if not path.exists("website/", DB_NAME):
+```
+
+- Checks if the database file does not exist.
+
+- The condition path.exists("website/", DB_NAME) combines the directory path "website/" with the database file name DB_NAME to form the complete path to the database file.
+
+```py
+db.create_all(app=app)
+```
+
+- If the database file doesn't exist, this line uses the db.create_all() method to create all the tables defined by the SQLAlchemy models.
+
+- The app argument is passed to this method to associate the tables with the provided Flask app instance.
+
+```py
+print("Created Database!")
+```
+
+- Prints a message indicating that the database has been created.
+
+- To summarize, the create_database function is responsible for checking if the database file doesn't exist and then creating all the necessary tables based on the defined models using SQLAlchemy. It's a crucial step in setting up and initializing the database structure for your Flask application.
+
+- This will create a database.db file inside the directory.
