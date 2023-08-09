@@ -1500,3 +1500,9 @@ else:
 - If the passwords match, a success message is flashed, and the user is redirected to the home page.
 - If the password does not match, an error message is flashed.
 - If no user with the provided email exists, an error message is flashed indicating that the email does not exist in the database.
+
+---
+
+😀😁😎 Great Job till Here!!
+
+---
