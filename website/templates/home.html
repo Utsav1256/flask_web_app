@@ -1,4 +1,38 @@
 {% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
 %}
-<h1>This is the Home page.</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}" />
+<div class="home container">
+  <div class="main">
+    <div class="poster-box">
+      <div class="poster">
+        <h1>Take a note!</h1>
+      </div>
+      <a id="notes" href="/notes">
+        <button>
+          <span class="text first-text">Click</span
+          ><span class="text sec-text"></span>
+        </button>
+      </a>
+    </div>
+  </div>
+</div>
+<script>
+  const text = document.querySelector(".sec-text");
+  const textLoad = () => {
+    setTimeout(() => {
+      text.textContent = "!";
+    }, 0);
+    setTimeout(() => {
+      text.textContent = "Here";
+    }, 4000);
+    setTimeout(() => {
+      text.textContent = "Me";
+    }, 8000);
+    setTimeout(() => {
+      text.textContent = "😀";
+    }, 12000);
+  };
+  textLoad();
+  setInterval(textLoad, 16000);
+</script>
 {% endblock %}

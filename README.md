@@ -1652,3 +1652,29 @@ def load_user(user_id):
 - In this example, it uses the User model and the provided user ID to query the database and retrieve the user.
 
 - Overall, these lines of code set up the LoginManager extension for your Flask application. They configure the login view, define how user loading should work, and initialize the extension to manage user authentication. This setup enables you to use decorators like @login_required and functions like login_user() and logout_user() to manage user sessions and authentication throughout your application.
+
+### Checking if user is logged-in
+
+```py
+@views.route("/profile")
+@login_required
+def profile():
+    return render_template("profile.html", user=current_user)
+```
+
+- `user=current_user`:
+- By providing this, we can able to reference the current user in our template, and check if it is authenticated.
+
+```py
+    <div class="navbar-nav">
+      {% if user.is_authenticated %}
+      <a class="nav-item nav-link" id="home" href="/">Home</a>
+      <a class="nav-item nav-link" id="profile" href="/profile">Profile</a>
+      <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+      {% else %}
+      <a class="nav-item nav-link" id="home" href="/">Home</a>
+      <a class="nav-item nav-link" id="login" href="/login">Login</a>
+      <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+      {% endif %}
+    </div>
+```

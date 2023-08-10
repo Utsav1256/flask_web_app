@@ -1,0 +1,65 @@
+.poster-box {
+  /* width: 60%; */
+  background-color: #000000;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.poster {
+  /* background-color: ; */
+}
+
+h1 {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 120px;
+  font-weight: 900;
+  text-align: center;
+  color: cyan;
+  -webkit-text-stroke: 4px cyan;
+  color: transparent;
+}
+
+button {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 70px;
+  font-weight: 700;
+  background-color: orangered;
+  -webkit-text-stroke: 3px orangered;
+  background-color: transparent;
+  border-color: #fff;
+  border-radius: 15px;
+  padding: 10px;
+}
+
+button .text {
+  position: relative;
+  color: rgb(236, 174, 5);
+}
+
+.text.first-text {
+  color: aliceblue;
+}
+.text.sex-text:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #000;
+  border-left: rgb(7, 177, 143);
+  animation: animate 4s step(12) infinite;
+}
+@keyframes animate {
+  40%,
+  60% {
+    let: 100%;
+  }
+  100% {
+    left: 0%;
+  }
+}
